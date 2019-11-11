@@ -1,11 +1,19 @@
-# 分布式高效唯一ID生成器(sequence)
+# 分布式高效ID生产黑科技(sequence)
 
+## 开源产品介绍（微服务基础设施<font color="red">QQ交流群：191958521</font>）
 
-基于开源项目[sequence](https://git.oschina.net/yu120/sequence)
++ 微服务神经元(neural)
+
+1. GITHUB：https://github.com/yu120/neural
+2. 码云：https://git.oschina.net/yu120/neural
 
 
 ## 简介
-高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。
+高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。新增特性：
+- 支持自定义允许时间回拨的范围
+- 解决跨毫秒起始值每次为0开始的情况（避免末尾必定为偶数，而不便于取余使用问题）
+- 解决高并发场景中获取时间戳性能问题
+
 
 Twitter-Snowflake算法产生的背景相当简单，为了满足Twitter每秒上万条消息的请求，每条消息都必须分配一条唯一的id，这些id还需要一些大致的顺序（方便客户端排序），并且在分布式系统中不同机器产生的id必须不同。
 
@@ -28,39 +36,3 @@ Twitter-Snowflake算法产生的背景相当简单，为了满足Twitter每秒�
 
 ## Snowflake – 序列号
 序列号就是一系列的自增id（多线程建议使用atomic），为了处理在同一毫秒内需要给多条消息分配id，若同一毫秒把序列号用完了，则“等待至下一毫秒”。
-
-# 获取
-```xml
-<dependency>
-	<groupId>cn.izern</groupId>
-	<artifactId>sequence</artifactId>
-	<version>${version}</version>
-</dependency>
-```
-## 使用
-```java
-import cn.izern.sequence.Sequence;
-
-Sequence sequence = new Sequence();
-sequence.nextId();
-```
-线程安全,生成唯一序列ID
-
-## hibernate/jpa 使用Sequence作为ID生成方式
-
-```java
-private Long id;
-	
-// other 
-
-@Id
-@GeneratedValue(generator = "idGenerator")
-@GenericGenerator(name = "idGenerator", strategy = "cn.izern.hibernate.id.IDSequenceGenerator")
-public Long getId() {
-	return id;
-}
-
-public void setId(Long id) {
-	this.id = id;
-}
-```
